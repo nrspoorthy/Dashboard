@@ -43,20 +43,43 @@ export default function Dashboard() {
     user.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const sliderSettings = {
-    dots: true,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    rows: 2,
-    arrows: true,
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3 } },
-      { breakpoint: 768, settings: { slidesToShow: 2 } },
-      { breakpoint: 480, settings: { slidesToShow: 1 } },
-    ],
-  };
+const sliderSettings = {
+  dots: true,
+  infinite: false,
+  speed: 500,
+  arrows: true,
+
+  
+  slidesToShow: 4,
+  slidesToScroll: 1,
+  rows: 2,
+
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+        rows: 2,
+      },
+    },
+    {
+      breakpoint: 768,
+      settings: {
+        slidesToShow: 2,
+        rows: 1, 
+      },
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        rows: 1, 
+      },
+    },
+  ],
+};
+
 
   return (
     <>
