@@ -41,7 +41,9 @@ export default function UserDetails() {
 
   return (
     <>
-      <Navbar />
+      <Navbar showSearch={false} />
+
+
 
       <div className="min-h-[calc(100vh-64px)] bg-gray-100 px-4 py-8">
         <div className="max-w-md mx-auto">
