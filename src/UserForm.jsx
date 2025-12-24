@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useUsers } from "./context/UserContext";
 
-export default function UserForm({ closeForm }) {
+export default function UserForm({ closeForm, onSuccess }) {
   const { users, setUsers } = useUsers();
 
   const [name, setName] = useState("");
@@ -13,41 +13,40 @@ export default function UserForm({ closeForm }) {
   const [error, setError] = useState("");
 
   const handleAddUser = () => {
-  if (!name || !email || !phone || !company || !city || !location) {
-    setError("All fields are required");
-    return;
-  }
+    if (!name || !email || !phone || !company || !city || !location) {
+      setError("All fields are required");
+      return;
+    }
 
-  if (name.length < 3) {
-    setError("Name must be at least 3 characters");
-    return;
-  }
+    if (name.length < 3) {
+      setError("Name must be at least 3 characters");
+      return;
+    }
 
-  if (!email.includes("@")) {
-    setError("Email must contain @");
-    return;
-  }
+    if (!email.includes("@")) {
+      setError("Email must contain @");
+      return;
+    }
 
-  if (phone.length !== 10) {
-    setError("Phone number must be 10 digits");
-    return;
-  }
+    if (phone.length !== 10) {
+      setError("Phone number must be 10 digits");
+      return;
+    }
 
-  setError("");
+    setError("");
 
-  const newUser = {
-    id: Date.now(),
-    name,
-    email,
-    phone,
-    company: { name: company },
-    address: { city },
+    const newUser = {
+      id: Date.now(),
+      name,
+      email,
+      phone,
+      company: { name: company },
+      address: { city },
+    };
+
+    setUsers([...users, newUser]);
+    onSuccess(); // ✅ SHOW SUCCESS UI
   };
-
-  setUsers([...users, newUser]);
-  closeForm();
-};
-
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
@@ -73,12 +72,12 @@ export default function UserForm({ closeForm }) {
 
         <div className="space-y-4">
           {[
-            { label: "Name", value: name, set: setName, placeholder: "Full Name" },
-            { label: "Email", value: email, set: setEmail, placeholder: "Email Address" },
-            { label: "Phone", value: phone, set: setPhone, placeholder: "10-digit Phone" },
-            { label: "Company", value: company, set: setCompany, placeholder: "Company Name" },
-            { label: "City", value: city, set: setCity, placeholder: "City" },
-            { label: "Location", value: location, set: setLocation, placeholder: "Location" },
+            { label: "Name", value: name, set: setName },
+            { label: "Email", value: email, set: setEmail },
+            { label: "Phone", value: phone, set: setPhone },
+            { label: "Company", value: company, set: setCompany },
+            { label: "City", value: city, set: setCity },
+            { label: "Location", value: location, set: setLocation },
           ].map((field, index) => (
             <div key={index} data-aos="fade-up">
               <label className="block text-sm font-medium mb-1">
@@ -89,7 +88,6 @@ export default function UserForm({ closeForm }) {
                 value={field.value}
                 onChange={(e) => field.set(e.target.value)}
                 className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder={field.placeholder}
               />
             </div>
           ))}
@@ -98,13 +96,13 @@ export default function UserForm({ closeForm }) {
         <div className="flex gap-3 mt-6">
           <button
             onClick={closeForm}
-            className="w-full border rounded-lg py-2 hover:bg-gray-100 transition"
+            className="w-full border rounded-lg py-2 hover:bg-gray-100"
           >
             Cancel
           </button>
           <button
             onClick={handleAddUser}
-            className="w-full bg-blue-600 text-white rounded-lg py-2 hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 text-white rounded-lg py-2 hover:bg-blue-700"
           >
             Add Member
           </button>

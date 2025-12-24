@@ -1,12 +1,9 @@
-import { Routes,Route } from "react-router-dom"
-import Dashboard from "./Dashboard"
-import UserDetails from "./UserDetails"
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+import { Routes, Route } from "react-router-dom";
+import Dashboard from "./Dashboard";
+import UserDetails from "./UserDetails";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import { useEffect } from "react";
-
-
-
 
 function App() {
   useEffect(() => {
@@ -17,15 +14,11 @@ function App() {
   }, []);
 
   return (
-    <>
-       
-            <Routes>
-              <Route path="/" element={<Dashboard/>}></Route>
-              <Route path="/user/:id" element={<UserDetails/>}></Route>
-            </Routes>
-      
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/user/:id" element={<UserDetails />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

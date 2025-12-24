@@ -6,12 +6,14 @@ import { useUsers } from "./context/UserContext";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Navbar from "./Navbar";
+import Success from "./Success";
 
 export default function Dashboard() {
   const { users, setUsers } = useUsers();
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -27,7 +29,7 @@ export default function Dashboard() {
     };
 
     fetchUsers();
-  }, []);
+  }, [setUsers]);
 
   if (loading) {
     return (
@@ -41,7 +43,6 @@ export default function Dashboard() {
     user.name.toLowerCase().includes(search.toLowerCase())
   );
 
- 
   const sliderSettings = {
     dots: true,
     infinite: false,
@@ -61,15 +62,23 @@ export default function Dashboard() {
     <>
       <Navbar search={search} setSearch={setSearch} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         <button
           onClick={() => setShowForm(true)}
-          className="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 mb-6 w-full sm:w-auto"
+          className="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 mb-6"
         >
           + Add User
         </button>
 
-        {showForm && <UserForm closeForm={() => setShowForm(false)} />}
+        {showForm && (
+          <UserForm
+            closeForm={() => setShowForm(false)}
+            onSuccess={() => {
+              setShowForm(false);
+              setShowSuccess(true);
+            }}
+          />
+        )}
 
         {filteredUsers.length === 0 ? (
           <p className="text-gray-500">No users found</p>
@@ -81,6 +90,10 @@ export default function Dashboard() {
               </div>
             ))}
           </Slider>
+        )}
+
+        {showSuccess && (
+          <Success onClose={() => setShowSuccess(false)} />
         )}
       </div>
     </>
