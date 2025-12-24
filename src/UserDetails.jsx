@@ -1,7 +1,6 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useUsers } from "./context/UserContext";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import Navbar from "./Navbar";
 
 const avatars = [
   "https://randomuser.me/api/portraits/women/44.jpg",
@@ -22,86 +21,78 @@ const headerColors = [
 
 export default function UserDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { users, setUsers } = useUsers();
-  const [loading, setLoading] = useState(true);
 
-  const avatar = avatars[id % avatars.length];
-  const headerColor = headerColors[id % headerColors.length];
+  const user = users.find((u) => u.id === Number(id));
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
-        const data = await res.json();
-        setUsers(data);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  if (loading) {
+  if (!user) {
     return (
-      <div className="flex justify-center items-center h-screen text-gray-600 text-lg">
-        Loading Details...
+      <div className="h-screen flex items-center justify-center text-gray-600">
+        User not found
       </div>
     );
   }
 
+  const avatar = avatars[id % avatars.length];
+  const headerColor = headerColors[id % headerColors.length];
+
+
+
   return (
-    <div className="min-h-screen bg-gray-100 px-6 py-8">
-      <div className="max-w-lg mx-auto">
-        <Link
-          to="/"
-          className="inline-block mb-6 text-sm font-medium text-sky-600 hover:underline"
-        >
-          ← Back to Dashboard
-        </Link>
+    <>
+      <Navbar />
 
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className={`${headerColor} h-32 flex justify-center items-end`}>
-            <img
-              src={avatar}
-              alt={users.name}
-              className="w-28 h-28 rounded-full border-4 border-white shadow-lg -mb-14 object-cover"
-            />
-          </div>
+      <div className="min-h-[calc(100vh-64px)] bg-gray-100 px-4 py-8">
+        <div className="max-w-md mx-auto">
+          <Link
+            to="/"
+            className="text-sky-600 text-sm hover:underline"
+          >
+            ← Back
+          </Link>
 
-          <div className="pt-16 pb-8 px-6 text-center">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {users.name}
-            </h2>
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden mt-4">
+            {/* Header */}
+            <div
+              className={`${headerColor} h-28 flex justify-center items-end`}
+            >
+              <img
+                src={avatar}
+                alt={user.name}
+                className="w-24 h-24 rounded-full border-4 border-white shadow-md -mb-12"
+              />
+            </div>
 
-            <p className="text-gray-500 text-sm mt-1">
-              {users.company?.name}
-            </p>
-
-            <div className="mt-6 space-y-3 text-sm text-gray-600">
-              <p className="break-all">
-                Email: {users.email}
+            {/* Content */}
+            <div className="pt-14 pb-6 px-6 text-center">
+              <h2 className="text-lg sm:text-xl font-semibold">
+                {user.name}
+              </h2>
+              <p className="text-gray-500 text-sm">
+                {user.company?.name}
               </p>
 
-              <p>
-                Phone: {users.phone}
-              </p>
+              <div className="mt-5 space-y-2 text-sm text-gray-600 text-left">
+                <p>
+                  <span className="font-medium">Email:</span>{" "}
+                  {user.email}
+                </p>
+                <p>
+                  <span className="font-medium">Phone:</span>{" "}
+                  {user.phone}
+                </p>
+                <p>
+                  <span className="font-medium">City:</span>{" "}
+                  {user.address?.city}
+                </p>
+              </div>
 
-              <p>
-                <span className="font-medium text-gray-800">City:</span>{" "}
-                {users.address?.city}
-              </p>
-
-              <p>
-                <span className="font-medium text-gray-800">Geo:</span>{" "}
-                {users.address?.geo?.lat}, {users.address?.geo?.lng}
-              </p>
+              
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

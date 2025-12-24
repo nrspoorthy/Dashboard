@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
+import Slider from "react-slick";
 import UserCard from "./UserCard";
 import UserForm from "./UserForm";
 import { useUsers } from "./context/UserContext";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Navbar from "./Navbar";
 
 export default function Dashboard() {
   const { users, setUsers } = useUsers();
@@ -37,42 +41,48 @@ export default function Dashboard() {
     user.name.toLowerCase().includes(search.toLowerCase())
   );
 
+ 
+  const sliderSettings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    rows: 2,
+    arrows: true,
+    responsive: [
+      { breakpoint: 1024, settings: { slidesToShow: 3 } },
+      { breakpoint: 768, settings: { slidesToShow: 2 } },
+      { breakpoint: 480, settings: { slidesToShow: 1 } },
+    ],
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between mb-10">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-serif">
-          User Dashboard
-        </h1>
+    <>
+      <Navbar search={search} setSearch={setSearch} />
 
-        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <input
-            type="text"
-            placeholder="Search user..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="p-3 border rounded-lg w-full sm:w-64"
-          />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <button
+          onClick={() => setShowForm(true)}
+          className="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 mb-6 w-full sm:w-auto"
+        >
+          + Add User
+        </button>
 
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 w-full sm:w-auto"
-          >
-            + Add User
-          </button>
-        </div>
-      </div>
+        {showForm && <UserForm closeForm={() => setShowForm(false)} />}
 
-      {showForm && <UserForm closeForm={() => setShowForm(false)} />}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredUsers.length === 0 ? (
           <p className="text-gray-500">No users found</p>
         ) : (
-          filteredUsers.map((user) => (
-            <UserCard key={user.id} user={user} />
-          ))
+          <Slider {...sliderSettings}>
+            {filteredUsers.map((user) => (
+              <div key={user.id} className="px-2 py-3">
+                <UserCard user={user} />
+              </div>
+            ))}
+          </Slider>
         )}
       </div>
-    </div>
+    </>
   );
 }

@@ -7,73 +7,104 @@ export default function UserForm({ closeForm }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [company, setCompany] = useState("");
+  const [city, setCity] = useState("");
+  const [location, setLocation] = useState("");
+  const [error, setError] = useState("");
 
   const handleAddUser = () => {
-    if (!name || !email || !phone) {
-      alert("Please fill all fields");
-      return;
-    }
+  if (!name || !email || !phone || !company || !city || !location) {
+    setError("All fields are required");
+    return;
+  }
 
-    const newUser = {
-      id: Date.now(),
-      name,
-      email,
-      phone,
-      company: { name: "New Company" },
-      address: { city: "N/A", geo: { lat: "0", lng: "0" } },
-    };
+  if (name.length < 3) {
+    setError("Name must be at least 3 characters");
+    return;
+  }
 
-    setUsers([...users, newUser]);
+  if (!email.includes("@")) {
+    setError("Email must contain @");
+    return;
+  }
 
-    setName("");
-    setEmail("");
-    setPhone("");
-    closeForm();
+  if (phone.length !== 10) {
+    setError("Phone number must be 10 digits");
+    return;
+  }
+
+  setError("");
+
+  const newUser = {
+    id: Date.now(),
+    name,
+    email,
+    phone,
+    company: { name: company },
+    address: { city },
   };
+
+  setUsers([...users, newUser]);
+  closeForm();
+};
+
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-      <div className="bg-white rounded-2xl p-6 sm:p-8 w-full max-w-md">
-        <h3 className="text-xl sm:text-2xl font-semibold text-center mb-6">
+      <div
+        data-aos="zoom-in"
+        className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl"
+      >
+        <h3
+          data-aos="fade-down"
+          className="text-2xl font-semibold text-center mb-6"
+        >
           Add New Member
         </h3>
 
+        {error && (
+          <p
+            data-aos="fade-in"
+            className="text-red-500 text-sm text-center mb-4"
+          >
+            {error}
+          </p>
+        )}
+
         <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full border rounded-lg px-4 py-3 text-sm sm:text-base"
-          />
-
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border rounded-lg px-4 py-3 text-sm sm:text-base"
-          />
-
-          <input
-            type="text"
-            placeholder="Phone Number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full border rounded-lg px-4 py-3 text-sm sm:text-base"
-          />
+          {[
+            { label: "Name", value: name, set: setName, placeholder: "Full Name" },
+            { label: "Email", value: email, set: setEmail, placeholder: "Email Address" },
+            { label: "Phone", value: phone, set: setPhone, placeholder: "10-digit Phone" },
+            { label: "Company", value: company, set: setCompany, placeholder: "Company Name" },
+            { label: "City", value: city, set: setCity, placeholder: "City" },
+            { label: "Location", value: location, set: setLocation, placeholder: "Location" },
+          ].map((field, index) => (
+            <div key={index} data-aos="fade-up">
+              <label className="block text-sm font-medium mb-1">
+                {field.label}
+              </label>
+              <input
+                type="text"
+                value={field.value}
+                onChange={(e) => field.set(e.target.value)}
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder={field.placeholder}
+              />
+            </div>
+          ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 mt-6">
+        <div className="flex gap-3 mt-6">
           <button
             onClick={closeForm}
-            className="w-full border rounded-lg py-3 text-sm sm:text-base"
+            className="w-full border rounded-lg py-2 hover:bg-gray-100 transition"
           >
             Cancel
           </button>
           <button
             onClick={handleAddUser}
-            className="w-full bg-blue-600 text-white rounded-lg py-3 text-sm sm:text-base hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 text-white rounded-lg py-2 hover:bg-blue-700 transition"
           >
             Add Member
           </button>
